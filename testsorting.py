@@ -1,3 +1,9 @@
+"""
+Author : Darjengar
+Date : 09/17/2021
+GPL License
+"""
+
 import sorting
 
 def main():

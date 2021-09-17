@@ -1,3 +1,9 @@
+/*
+Author : Darjengar
+Date : 09/17/2021
+GPL License
+*/
+
 #define PY_SSIZE_T_CLEAN
 #include <Python.h>
 
