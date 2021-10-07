@@ -88,4 +88,4 @@ void cpy2strlist(const char *clist[], PyObject *list, Py_ssize_t size)
     }
 }
 
-void sort
+/*void sort*/
