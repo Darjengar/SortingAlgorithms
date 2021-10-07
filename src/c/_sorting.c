@@ -12,66 +12,33 @@ GPL License
 
 #define MAX_LENGTH 15
 
-/* char *list[], int size*/
 static PyObject *method_bubblesort(PyObject *self, PyObject *args);
-
-/*int main()
-{
-    char *l1[MAX_LENGTH] = {"ab", "abb", "aba", "dce", "dca", "dax", "dra", "cag", "x"};
-    printf("Print unsorted list:\n");
-    for (int iii = 0; iii < 9; iii++) {
-        printf("%s ", l1[iii]);
-    }
-    printf("\n");
-    bubblesort(l1, 9);
-    printf("Print sorted list:\n");
-    for (int iii = 0; iii < 9; iii++) {
-        printf("%s ", l1[iii]);
-    }
-    printf("\n");
-    return 0;
-}*/
+void bubblesort(PyObject *list);
+void cpy2cstrlist(PyObject *list, const char *clist[]);
+void cpy2strlist(const char *clist[], PyObject *list);
+void sort_wrapper()
 
 static PyObject *method_bubblesort(PyObject *self, PyObject *args)
 {
     PyObject *list;
-    PyObject *item;
 
     if (!PyArg_ParseTuple(args, "O", &list))
         return NULL;
 
+    Py_ssize_t size = PyList_Size(list);
+    const char *clist[size];
 
-    Py_ssize_t length = PyList_Size(list);
-    const char *clist[length];
+    cpy2cstrlist(list, clist, size);
+    bubblesort(list, size);
+    cpy2strlist(clist, list, size);
 
-    for (Py_ssize_t iii = 0; iii < length; iii++) {
-        item = PyList_GetItem(list, iii);
-        clist[iii] = PyUnicode_AsUTF8AndSize(item, NULL);
-    }
-
-    const char *tmp = "";
-    Py_ssize_t size = length;
-    while (size > 1) {
-        for (Py_ssize_t iii = 0; iii < size-1; iii++) {
-            if (strcmp(clist[iii], clist[iii+1]) > 0) {
-                tmp = clist[iii];
-                clist[iii] = clist[iii+1];
-                clist[iii+1] = tmp;
-            }
-        }
-        size--;
-    }
-
-    for (Py_ssize_t iii = 0; iii < length; iii++) {
-        item = PyUnicode_FromString(clist[iii]);
-        PyList_SetItem(list, iii, item);
-    }
     Py_INCREF(Py_None);
     return Py_None;
 }
 
 static PyMethodDef SortingMethods[] = {
-    {"bubblesort", method_bubblesort, METH_VARARGS, "Bubblesort algorithm"},
+    {"bubblesort", method_bubblesort, METH_VARARGS,
+     "Bubblesort algorithm"},
     {NULL, NULL, 0, NULL}
 };
 
@@ -83,6 +50,42 @@ static struct PyModuleDef sortingmodule = {
     SortingMethods
 };
 
-PyMODINIT_FUNC PyInit_sorting(void) {
+PyMODINIT_FUNC PyInit_sorting(void)
+{
     return PyModule_Create(&sortingmodule);
 }
+
+void bubblesort(PyObject *list, Py_ssize_t size)
+{
+    const char *tmp = "";
+    while (size > 1) {
+        for (Py_ssize_t iii = 0; iii < size-1; iii++) {
+            if (strcmp(clist[iii], clist[iii+1]) > 0) {
+                tmp = clist[iii];
+                clist[iii] = clist[iii+1];
+                clist[iii+1] = tmp;
+            }
+        }
+        size--;
+    }
+}
+
+void cpy2cstrlist(PyObject *list, const char *clist[], Py_ssize_t size)
+{
+    PyObject *item;
+    for (Py_ssize_t iii = 0; iii < size; iii++) {
+        item = PyList_GetItem(list, iii);
+        clist[iii] = PyUnicode_AsUTF8(item);
+    }
+}
+
+void cpy2strlist(const char *clist[], PyObject *list, Py_ssize_t size)
+{
+    PyObject *item;
+    for (Py_ssize_t iii = 0; iii < size; iii++) {
+        item = PyUnicode_FromString(clist[iii]);
+        PyList_SetItem(list, iii, item);
+    }
+}
+
+void sort
